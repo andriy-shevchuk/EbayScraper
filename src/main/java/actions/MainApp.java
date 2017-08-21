@@ -40,8 +40,10 @@ public class MainApp extends Application {
         button.setOnAction(e -> {
             EbayStoreAction storeAction = new EbayStoreAction(textField.getText());
             List<String> titles = storeAction.doScrape();
+            int elementNumber = 1;
             for (String title : titles) {
-                textArea.appendText(title+"\n");
+                textArea.appendText(elementNumber+". "+title+"\n");
+                elementNumber++;
             }
             storeAction.closeBrowser();
         });

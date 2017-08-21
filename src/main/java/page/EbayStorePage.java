@@ -8,6 +8,8 @@ import org.openqa.selenium.support.PageFactory;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.Thread.sleep;
+
 public class EbayStorePage extends BasePage{
 
     @FindBy(xpath = "//*[@class='lvtitle']//a")
@@ -15,6 +17,15 @@ public class EbayStorePage extends BasePage{
 
     @FindBy(xpath = "//li[@class='lvprice prc']")
     private List<WebElement> pricesList;
+
+    @FindBy(xpath = "//td[@class='pagn-next']//a[@aria-disabled='true']")
+    private WebElement disabledNext;
+
+    @FindBy(xpath = "//td[@class='pagn-next']//a")
+    private WebElement nextButton;
+
+    @FindBy(id = "FooterLegalNoticeContainer")
+    private WebElement updatedInformation;
 
     /**
      * LoginPage constructor
@@ -25,17 +36,25 @@ public class EbayStorePage extends BasePage{
         super(driver);
     }
 
-    public void isPageLoaded() {
+    public boolean isPageLoaded() {
+        return waitUntilElementDisplayed(updatedInformation).isDisplayed();
     }
 
-    public List<String> scrapeFirstPage() {
+    public List<String> scrapeStore() {
 
         List<String> titles = new ArrayList<>();
 
-        for (WebElement item : itemsList) {
-            titles.add(item.getText());
-        }
+        do {
+            for (WebElement item : itemsList) {
+                titles.add(item.getText());
+            }
+            if (isElementDisplayed(disabledNext, 1))
+                break;
+            nextButton.click();
+            isPageLoaded();
 
+
+        } while (true);
 
         return titles;
     }

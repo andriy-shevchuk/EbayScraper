@@ -40,14 +40,8 @@ public class EbayStoreAction extends BaseAction {
 
 
     public List<String> doScrape() {
-        try {
-            sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        return ebayStorePage.scrapeFirstPage();
-
+        ebayStorePage.isPageLoaded();
+        return ebayStorePage.scrapeStore();
     }
 
     public EbayStoreAction(String website) {
@@ -56,7 +50,6 @@ public class EbayStoreAction extends BaseAction {
         ebayStorePage = PageFactory.initElements(webDriver, EbayStorePage.class);
         ebayStorePage.isPageLoaded();
     }
-
 
     public void closeBrowser() {
         webDriver.quit();
