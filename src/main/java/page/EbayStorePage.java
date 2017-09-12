@@ -40,14 +40,20 @@ public class EbayStorePage extends BasePage{
         return waitUntilElementDisplayed(updatedInformation).isDisplayed();
     }
 
-    public List<String> scrapeStore() {
+    public List[] scrapeStore() {
+
 
         List<String> titles = new ArrayList<>();
+        List<String> prices = new ArrayList<>();
 
         do {
             for (WebElement item : itemsList) {
                 titles.add(item.getText());
             }
+            for (WebElement price : pricesList) {
+                prices.add(price.getText());
+            }
+
             if (isElementDisplayed(disabledNext, 1))
                 break;
             nextButton.click();
@@ -56,6 +62,8 @@ public class EbayStorePage extends BasePage{
 
         } while (true);
 
-        return titles;
+        List[] productData = new List[]{titles, prices};
+
+        return productData;
     }
 }

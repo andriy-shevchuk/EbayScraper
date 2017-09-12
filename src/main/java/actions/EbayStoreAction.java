@@ -39,7 +39,7 @@ public class EbayStoreAction extends BaseAction {
     }
 
 
-    public List<String> doScrape() {
+    public List[] doScrape() {
         ebayStorePage.isPageLoaded();
         return ebayStorePage.scrapeStore();
     }
