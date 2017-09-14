@@ -89,11 +89,19 @@ public class MainApp extends Application {
 
             table.getItems().forEach(c -> {
                 Row row = sheet.createRow(rowNum[0]++);
-                Cell cell = row.createCell(0);
-                cell.setCellValue(c.getName());
+                Cell cellNumber = row.createCell(0);
+                cellNumber.setCellValue(c.getNumber());
+                Cell cellName = row.createCell(1);
+                cellName.setCellValue(c.getName());
+                Cell cellPrice = row.createCell(2);
+                cellPrice.setCellValue(c.getPrice());
 
 
             });
+
+            sheet.autoSizeColumn(0);
+            sheet.autoSizeColumn(1);
+            sheet.autoSizeColumn(2);
 
             try {
                 FileOutputStream outputStream = new FileOutputStream(FILE_NAME);
