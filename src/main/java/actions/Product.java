@@ -5,17 +5,20 @@ public class Product {
     private String name;
     private String price;
     private int number;
+    private String imageUrl;
 
     public Product(){
         this.name = "";
         this.price = "";
         this.number = 0;
+        this.imageUrl = "";
     }
 
-    public Product(String name, String price, int quantity){
+    public Product(String name, String price, int quantity, String imageUrl){
         this.name = name;
         this.price = price;
         this.number = quantity;
+        this.imageUrl = imageUrl;
     }
 
     public String getName() {
@@ -42,4 +45,11 @@ public class Product {
         this.number = number;
     }
 
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 }

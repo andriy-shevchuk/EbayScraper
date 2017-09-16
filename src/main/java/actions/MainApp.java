@@ -16,10 +16,14 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 
 public class MainApp extends Application {
@@ -30,6 +34,9 @@ public class MainApp extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+
+        final String[] directory = {""};
+
         BorderPane root = new BorderPane();
         root.setPadding(new Insets(10,10,10,10));
 
@@ -58,8 +65,13 @@ public class MainApp extends Application {
         priceColumn.setPrefWidth(150);
         priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
 
+        //ImageUrl column
+        TableColumn<Product, String> urlColumn = new TableColumn<>("ImageUrl");
+        urlColumn.setPrefWidth(50);
+        urlColumn.setCellValueFactory(new PropertyValueFactory<>("imageUrl"));
+
         table = new TableView<>();
-        table.getColumns().addAll(numberColumn, nameColumn, priceColumn);
+        table.getColumns().addAll(numberColumn, nameColumn, priceColumn, urlColumn);
 
         TextField txtFldStore = new TextField();
         txtFldStore.setPrefWidth(450);
@@ -96,6 +108,7 @@ public class MainApp extends Application {
                 product.setName(title.toString());
                 product.setNumber(elementNumber);
                 product.setPrice((String) productsData[1].get(elementNumber-1));
+                product.setImageUrl((String) productsData[2].get(elementNumber-1));
                 table.getItems().add(product);
                 elementNumber++;
             }
@@ -115,6 +128,28 @@ public class MainApp extends Application {
                 cellName.setCellValue(c.getName());
                 Cell cellPrice = row.createCell(2);
                 cellPrice.setCellValue(c.getPrice());
+                Cell cellImageUrl = row.createCell(3);
+                cellImageUrl.setCellValue(c.getImageUrl());
+
+                URL url = null;
+                try {
+                    url = new URL(c.getImageUrl());
+                } catch (MalformedURLException e1) {
+                    e1.printStackTrace();
+                }
+                BufferedImage img = null;
+                try {
+                    img = ImageIO.read(url);
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+                File file = new File(directory[0]+"\\ProductPictures\\"+c.getNumber()+".jpg");
+                file.mkdirs();
+                try {
+                    ImageIO.write(img, "jpg", file);
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
 
 
             });
@@ -142,6 +177,7 @@ public class MainApp extends Application {
             if(selectedDirectory == null){
                 txtFldFilePath.setText("No Directory selected");
             }else{
+                directory[0] = selectedDirectory.getAbsolutePath();
                 txtFldFilePath.setText(selectedDirectory.getAbsolutePath()+"\\ProductsList.xlsx");
             }
         });

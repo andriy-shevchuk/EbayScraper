@@ -18,6 +18,9 @@ public class EbayStorePage extends BasePage{
     @FindBy(xpath = "//li[@class='lvprice prc']")
     private List<WebElement> pricesList;
 
+    @FindBy(xpath = "//*[@class='img']")
+    private List<WebElement> imagesList;
+
     @FindBy(xpath = "//td[@class='pagn-next']//a[@aria-disabled='true']")
     private WebElement disabledNext;
 
@@ -45,6 +48,7 @@ public class EbayStorePage extends BasePage{
 
         List<String> titles = new ArrayList<>();
         List<String> prices = new ArrayList<>();
+        List<String> images = new ArrayList<>();
 
         do {
             for (WebElement item : itemsList) {
@@ -52,6 +56,10 @@ public class EbayStorePage extends BasePage{
             }
             for (WebElement price : pricesList) {
                 prices.add(price.getText());
+            }
+            for (WebElement image : imagesList) {
+                images.add(image.getAttribute("src"));
+                //System.out.println(image.getAttribute("src"));
             }
 
             if (isElementDisplayed(disabledNext, 1))
@@ -62,7 +70,7 @@ public class EbayStorePage extends BasePage{
 
         } while (true);
 
-        List[] productData = new List[]{titles, prices};
+        List[] productData = new List[]{titles, prices, images};
 
         return productData;
     }
