@@ -8,6 +8,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -15,6 +16,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -30,8 +32,15 @@ public class MainApp extends Application {
     public void start(Stage primaryStage) throws Exception {
         BorderPane root = new BorderPane();
         root.setPadding(new Insets(10,10,10,10));
-        HBox hBox = new HBox(10);
-        hBox.setPadding(new Insets(0,0,10,0));
+
+        VBox vBoxTop = new VBox(10);
+
+        HBox hBoxFirstLine = new HBox(10);
+        hBoxFirstLine.setPadding(new Insets(0,0,10,0));
+
+        HBox hBoxSecondLine = new HBox(10);
+        hBoxSecondLine.setPadding(new Insets(0,0,10,0));
+
         VBox vBox = new VBox(10);
 
         //Name column
@@ -52,23 +61,34 @@ public class MainApp extends Application {
         table = new TableView<>();
         table.getColumns().addAll(numberColumn, nameColumn, priceColumn);
 
-        TextField textField = new TextField();
-        textField.setPrefWidth(450);
-        textField.setPromptText("Ebay store URL");
+        TextField txtFldStore = new TextField();
+        txtFldStore.setPrefWidth(450);
+        txtFldStore.setPromptText("Ebay store URL");
+
+        TextField txtFldFilePath = new TextField();
+        txtFldFilePath.setPrefWidth(450);
+        txtFldFilePath.setPromptText("Choose directory to save...");
+
+
+
         Button buttonScrape = new Button("Scrape");
         Button buttonExportXLS = new Button("Export to Excel");
+        Button btnChooseDir = new Button("Choose directory");
 
 
 
 
-        hBox.getChildren().setAll(textField,buttonScrape,buttonExportXLS);
+        hBoxFirstLine.getChildren().setAll(txtFldStore,buttonScrape);
+        hBoxSecondLine.getChildren().setAll(txtFldFilePath,btnChooseDir,buttonExportXLS);
+        vBoxTop.getChildren().setAll(hBoxFirstLine,hBoxSecondLine);
+
         vBox.getChildren().setAll(table);
 
-        root.setTop(hBox);
+        root.setTop(vBoxTop);
         root.setCenter(vBox);
 
         buttonScrape.setOnAction(e -> {
-            EbayStoreAction storeAction = new EbayStoreAction(textField.getText());
+            EbayStoreAction storeAction = new EbayStoreAction(txtFldStore.getText());
             List[] productsData = storeAction.doScrape();
             int elementNumber = 1;
             for (Object title : productsData[0]) {
@@ -104,7 +124,7 @@ public class MainApp extends Application {
             sheet.autoSizeColumn(2);
 
             try {
-                FileOutputStream outputStream = new FileOutputStream(FILE_NAME);
+                FileOutputStream outputStream = new FileOutputStream(txtFldFilePath.getText());
                 workbook.write(outputStream);
                 workbook.close();
             } catch (FileNotFoundException ex) {
@@ -113,6 +133,20 @@ public class MainApp extends Application {
                 ex.printStackTrace();
             }
         });
+
+        btnChooseDir.setOnAction(e -> {
+            DirectoryChooser directoryChooser = new DirectoryChooser();
+            File selectedDirectory =
+                    directoryChooser.showDialog(primaryStage);
+
+            if(selectedDirectory == null){
+                txtFldFilePath.setText("No Directory selected");
+            }else{
+                txtFldFilePath.setText(selectedDirectory.getAbsolutePath()+"\\ProductsList.xlsx");
+            }
+        });
+
+
 
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);
