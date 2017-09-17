@@ -64,7 +64,12 @@ public class EbayStorePage extends BasePage{
 
             if (isElementDisplayed(disabledNext, 1))
                 break;
-            nextButton.click();
+
+            if (isElementDisplayed(nextButton, 2)) {
+                nextButton.click();
+            } else {
+                break;
+            }
             isPageLoaded();
 
 
